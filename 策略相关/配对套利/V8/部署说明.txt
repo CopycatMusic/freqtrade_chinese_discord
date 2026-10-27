@@ -15,6 +15,7 @@ freqtrade backtesting --config user_data/config_getpara.json --strategy-path use
 3、默认生成user_data/v8/parameters.json，只有asof和selected；selected包含币名及完整交易系数。历次相同格式的文件保存在parameters_history/。无合格结果时保留旧文件；相同内容重复发布不会重置策略或重试已拒绝的关系。
 首次还生成user_data/config_v8.json，默认模拟盘、1000 USDT模拟资金；已有配置保持不变，后续getpara更新只需发布参数。参数路径可用atr_parameters覆盖，首次生成的配置会带上自定义路径。
 部署默认N14、1倍、K18，max_open_trades不足时自动提高至2×K。需要修改时在atr_fixed_parameters中填写n_days、leverage_choice、max_pairs；只填要修改的项，其余使用默认值。
+每腿最低保证金按交易所规则、杠杆和原生下单余量计算，不另设固定5 USDT下限。任一腿金额不足或规则缺失时整对跳过，不占实仓名额；K是上限，不保证开满。
 
 4、先在另一个终端启动监控：
 python user_data/strategies/delist_watch.py run --userdir user_data

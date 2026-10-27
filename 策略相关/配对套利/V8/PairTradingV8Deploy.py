@@ -537,7 +537,14 @@ class PairTradingV8Deploy(IStrategy):
         return self.dp._exchange
 
     def _minimum(self, pair, price, leverage):
-        return max(5.0, float(self._exchange.get_min_pair_stake_amount(pair, price, -.05, leverage) or 0))
+        # Native limits include leverage and the existing order-size reserve.
+        # Unknown limits reject this pair instead of allowing an unchecked order.
+        value = self._exchange.get_min_pair_stake_amount(pair, price, -.05, leverage)
+        try:
+            minimum = float(value)
+        except (TypeError, ValueError):
+            return math.inf
+        return minimum if math.isfinite(minimum) and minimum > 0 else math.inf
 
 
     def _pair_capacity(self):
